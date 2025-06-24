@@ -9,6 +9,8 @@ import iaf.ofek.omega.bda.utils.IOUtil;
 
 import java.nio.file.Path;
 
+import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
+import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.DECRYPTED_SUFFIX;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.ENCRYPTED_SUFFIX;
 
@@ -39,7 +41,7 @@ public class EncryptionHandler<K> {
             EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
             content = encryptionAlgorithm.encrypt(numericContent, key);
             numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(content);
-            allKeys.append(key.getValue()).append("|");
+            allKeys.append(key.getValue()).append(KEYS_SEPARATOR);
         }
         Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
         Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
@@ -51,7 +53,7 @@ public class EncryptionHandler<K> {
 
     public void decrypt(Path encryptedFile, Path keyFile) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
-        String[] keysArray = filesUtil.readFile(keyFile).split("\\|");
+        String[] keysArray = filesUtil.readFile(keyFile).split(REGEX_PREFIX+KEYS_SEPARATOR);
         Long[] numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(encryptedContent);
         for (int i = repeat - 1; i >= 0; i--) {
             EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(keysArray[i]);

@@ -5,10 +5,7 @@ import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.RandomUtil;
 
-import java.util.Arrays;
-
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
-import static iaf.ofek.omega.bda.consts.EncryptionConstants.SEPARATOR;
 
 public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
 

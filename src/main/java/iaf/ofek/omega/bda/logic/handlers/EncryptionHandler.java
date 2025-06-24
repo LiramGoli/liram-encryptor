@@ -28,9 +28,9 @@ public class EncryptionHandler<K> {
 
     public void encrypt(Path path) {
         String fileContent = filesUtil.readFile(path);
-        String ascii = convertToAsciiString(fileContent);
+        String numericContent = convertToNumericContent(fileContent);
         EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
-        String encryptedText = encryptionAlgorithm.encrypt(ascii, key);
+        String encryptedText = encryptionAlgorithm.encrypt(numericContent, key);
         Path encryptedFilePath = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
         Path keyPath = encryptionFilesUtil.createKeyFilePath(encryptedFilePath);
         filesUtil.writeFile(keyPath, key.toString());
@@ -48,12 +48,12 @@ public class EncryptionHandler<K> {
         ioUtil.printMessage("File decrypted successfully and stored in: " + decryptedFilePath);
     }
 
-    private String convertToAsciiString(String context) {
-        StringBuilder asciiString = new StringBuilder();
+    private String convertToNumericContent(String context) {
+        StringBuilder numericContent = new StringBuilder();
         for (Character character : context.toCharArray()) {
-            asciiString.append((int) character).append(SEPARATOR);
+            numericContent.append((int) character).append(SEPARATOR);
         }
-        return asciiString.toString();
+        return numericContent.toString();
     }
 
 }

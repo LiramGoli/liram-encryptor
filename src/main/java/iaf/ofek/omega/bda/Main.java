@@ -1,7 +1,6 @@
 package iaf.ofek.omega.bda;
 
 import iaf.ofek.omega.bda.encryptions.shift.ShiftMultiplyEncryption;
-import iaf.ofek.omega.bda.encryptions.shift.ShiftUpEncryption;
 import iaf.ofek.omega.bda.initializers.ApplicationInitializer;
 import iaf.ofek.omega.bda.logic.handlers.EncryptionHandler;
 import iaf.ofek.omega.bda.logic.handlers.MenuOperationHandler;

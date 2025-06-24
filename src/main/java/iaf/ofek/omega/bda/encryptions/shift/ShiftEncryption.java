@@ -38,24 +38,23 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
         return new EncryptionKey<>(Integer.parseInt(keyContent));
     }
 
-    protected Long[] convertToLongArray(String data) {
-        return Arrays.stream(data.split("\\" + SEPARATOR))
-                .filter(s -> !s.isEmpty())
-                .map(Long::parseLong)
-                .toArray(Long[]::new);
-    }
-
-
     protected String processEncryption(Long[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
-        StringBuilder encryptedText = new StringBuilder();
+        StringBuilder processedData = new StringBuilder();
         for (Long value : data) {
-            encryptedText.append(characterShiftProcess.process(value, key));
+            processedData.append(characterShiftProcess.process(value, key));
         }
-        return String.valueOf(encryptedText);
+        return processedData.toString();
     }
 
     protected abstract String processCharacterEncryption(Long value, Integer key);
 
     protected abstract String processCharacterDecryption(Long value, Integer key);
+
+    private Long[] convertToLongArray(String data) {
+        return Arrays.stream(data.split("\\" + SEPARATOR))
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .toArray(Long[]::new);
+    }
 
 }

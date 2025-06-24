@@ -4,9 +4,9 @@ import iaf.ofek.omega.bda.models.EncryptionKey;
 
 public interface EncryptionAlgorithm<K> {
 
-    String encrypt(String data, EncryptionKey<K> key);
+    String encrypt(Long[] data, EncryptionKey<K> key);
 
-    String decrypt(String data, EncryptionKey<K> key);
+    String decrypt(Long[] data, EncryptionKey<K> key);
 
     EncryptionKey<K> generateEncryptionKey();
 

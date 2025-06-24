@@ -19,13 +19,13 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
     }
 
     @Override
-    public String encrypt(String data, EncryptionKey<Integer> key) {
-        return processEncryption(convertToLongArray(data), key.getValue(), this::processCharacterEncryption);
+    public String encrypt(Long[] data, EncryptionKey<Integer> key) {
+        return processEncryption(data, key.getValue(), this::processCharacterEncryption);
     }
 
     @Override
-    public String decrypt(String data, EncryptionKey<Integer> key) {
-        return processEncryption(convertToLongArray(data), key.getValue(), this::processCharacterDecryption);
+    public String decrypt(Long[] data, EncryptionKey<Integer> key) {
+        return processEncryption(data, key.getValue(), this::processCharacterDecryption);
     }
 
     @Override
@@ -49,12 +49,5 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
     protected abstract String processCharacterEncryption(Long value, Integer key);
 
     protected abstract String processCharacterDecryption(Long value, Integer key);
-
-    private Long[] convertToLongArray(String data) {
-        return Arrays.stream(data.split("\\" + SEPARATOR))
-                .filter(s -> !s.isEmpty())
-                .map(Long::parseLong)
-                .toArray(Long[]::new);
-    }
 
 }

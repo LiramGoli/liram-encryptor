@@ -19,6 +19,7 @@ public class Main {
         IOUtil ioUtil = new IOUtil(new Scanner(System.in));
         RandomUtil randomUtil = new RandomUtil(new Random());
         PathValidationUtil pathValidationUtil = new PathValidationUtil();
+        EncryptionHandlerUtil encryptionHandlerUtil = new EncryptionHandlerUtil();
         FilesUtil filesUtil = new FilesUtil(pathValidationUtil, ioUtil);
         MenuIOUtil menuIOUtil = new MenuIOUtil(ioUtil);
         FileNameUtil fileNameUtil = new FileNameUtil(filesUtil);
@@ -26,7 +27,7 @@ public class Main {
         ShiftMultiplyEncryption shiftUpEncryption = new ShiftMultiplyEncryption(randomUtil);
         MenuOperationSelector menuOperationSelector = new MenuOperationSelector(operationMap);
         EncryptionFilesUtil encryptionFilesUtil = new EncryptionFilesUtil(fileNameUtil, filesUtil);
-        EncryptionHandler<Integer> encryptionHandler = new EncryptionHandler<>(shiftUpEncryption, encryptionFilesUtil, filesUtil, ioUtil);
+        EncryptionHandler<Integer> encryptionHandler = new EncryptionHandler<>(shiftUpEncryption, encryptionFilesUtil, encryptionHandlerUtil, filesUtil, 2, ioUtil);
         MenuOperationHandler<Integer> menuOperationHandler = new MenuOperationHandler<>(encryptionHandler, filesUtil, ioUtil);
         menuOperationSelector.registerOperations(menuOperationHandler);
         ApplicationInitializer applicationInitializer = new ApplicationInitializer(menuOperationSelector, menuIOUtil, ioUtil);

@@ -17,7 +17,7 @@ public class ShiftUpEncryption extends ShiftEncryption {
 
     @Override
     protected String processCharacterDecryption(Long value, Integer key) {
-        return String.valueOf((char) (value - key));
+        return String.valueOf(value - key)+ SEPARATOR;
     }
 
 }

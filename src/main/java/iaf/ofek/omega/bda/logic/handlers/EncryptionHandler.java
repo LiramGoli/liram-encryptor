@@ -7,6 +7,7 @@ import iaf.ofek.omega.bda.utils.EncryptionHandlerUtil;
 import iaf.ofek.omega.bda.utils.FilesUtil;
 import iaf.ofek.omega.bda.utils.IOUtil;
 
+import java.math.BigInteger;
 import java.nio.file.Path;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
@@ -23,8 +24,12 @@ public class EncryptionHandler<K> {
     private final Integer repeat;
     private final IOUtil ioUtil;
 
-    public EncryptionHandler(EncryptionAlgorithm<K> encryptionAlgorithm, EncryptionFilesUtil encryptionFilesUtil, EncryptionHandlerUtil encryptionHandlerUtil,
-                             FilesUtil filesUtil, Integer repeat, IOUtil ioUtil) {
+    public EncryptionHandler(EncryptionAlgorithm<K> encryptionAlgorithm,
+                             EncryptionFilesUtil encryptionFilesUtil,
+                             EncryptionHandlerUtil encryptionHandlerUtil,
+                             FilesUtil filesUtil,
+                             Integer repeat,
+                             IOUtil ioUtil) {
         this.encryptionHandlerUtil = encryptionHandlerUtil;
         this.encryptionAlgorithm = encryptionAlgorithm;
         this.encryptionFilesUtil = encryptionFilesUtil;
@@ -35,12 +40,12 @@ public class EncryptionHandler<K> {
 
     public void encrypt(Path path) {
         String content = filesUtil.readFile(path);
-        Long[] numericContent = encryptionHandlerUtil.convertToNumericContent(content);
+        BigInteger[] numericContent = encryptionHandlerUtil.convertToNumericContent(content);
         StringBuilder allKeys = new StringBuilder();
         for (int i = 0; i < repeat; i++) {
             EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
             content = encryptionAlgorithm.encrypt(numericContent, key);
-            numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(content);
+            numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(content);
             allKeys.append(key.getValue()).append(KEYS_SEPARATOR);
         }
         Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
@@ -53,12 +58,12 @@ public class EncryptionHandler<K> {
 
     public void decrypt(Path encryptedFile, Path keyFile) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
-        String[] keysArray = filesUtil.readFile(keyFile).split(REGEX_PREFIX+KEYS_SEPARATOR);
-        Long[] numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(encryptedContent);
+        String[] keysArray = filesUtil.readFile(keyFile).split(REGEX_PREFIX + KEYS_SEPARATOR);
+        BigInteger[] numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(encryptedContent);
         for (int i = repeat - 1; i >= 0; i--) {
             EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(keysArray[i]);
             encryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
-            numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(encryptedContent);
+            numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(encryptedContent);
         }
         String decryptedContent = encryptionHandlerUtil.convertNumericStringToText(encryptedContent);
         Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(encryptedFile, DECRYPTED_SUFFIX);

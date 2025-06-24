@@ -1,7 +1,6 @@
 package iaf.ofek.omega.bda;
 
 import iaf.ofek.omega.bda.encryptions.shift.ShiftMultiplyEncryption;
-import iaf.ofek.omega.bda.encryptions.shift.ShiftUpEncryption;
 import iaf.ofek.omega.bda.initializers.ApplicationInitializer;
 import iaf.ofek.omega.bda.logic.handlers.EncryptionHandler;
 import iaf.ofek.omega.bda.logic.handlers.MenuOperationHandler;
@@ -25,10 +24,10 @@ public class Main {
         MenuIOUtil menuIOUtil = new MenuIOUtil(ioUtil);
         FileNameUtil fileNameUtil = new FileNameUtil(filesUtil);
         Map<Integer, MenuOperation> operationMap = new HashMap<>();
-        ShiftUpEncryption shiftUpEncryption = new ShiftUpEncryption(randomUtil);
+        ShiftMultiplyEncryption shiftMultiplyEncryption = new ShiftMultiplyEncryption(randomUtil);
         MenuOperationSelector menuOperationSelector = new MenuOperationSelector(operationMap);
         EncryptionFilesUtil encryptionFilesUtil = new EncryptionFilesUtil(fileNameUtil, filesUtil);
-        EncryptionHandler<Integer> encryptionHandler = new EncryptionHandler<>(shiftUpEncryption, encryptionFilesUtil, encryptionHandlerUtil, filesUtil, 5, ioUtil);
+        EncryptionHandler<Integer> encryptionHandler = new EncryptionHandler<>(shiftMultiplyEncryption, encryptionFilesUtil, encryptionHandlerUtil, filesUtil, 5, ioUtil);
         MenuOperationHandler<Integer> menuOperationHandler = new MenuOperationHandler<>(encryptionHandler, filesUtil, ioUtil);
         menuOperationSelector.registerOperations(menuOperationHandler);
         ApplicationInitializer applicationInitializer = new ApplicationInitializer(menuOperationSelector, menuIOUtil, ioUtil);

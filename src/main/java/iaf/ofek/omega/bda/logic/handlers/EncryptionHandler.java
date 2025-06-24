@@ -24,12 +24,8 @@ public class EncryptionHandler<K> {
     private final Integer repeat;
     private final IOUtil ioUtil;
 
-    public EncryptionHandler(EncryptionAlgorithm<K> encryptionAlgorithm,
-                             EncryptionFilesUtil encryptionFilesUtil,
-                             EncryptionHandlerUtil encryptionHandlerUtil,
-                             FilesUtil filesUtil,
-                             Integer repeat,
-                             IOUtil ioUtil) {
+    public EncryptionHandler(EncryptionAlgorithm<K> encryptionAlgorithm, EncryptionFilesUtil encryptionFilesUtil, EncryptionHandlerUtil encryptionHandlerUtil,
+                             FilesUtil filesUtil, Integer repeat, IOUtil ioUtil) {
         this.encryptionHandlerUtil = encryptionHandlerUtil;
         this.encryptionAlgorithm = encryptionAlgorithm;
         this.encryptionFilesUtil = encryptionFilesUtil;
@@ -41,19 +37,14 @@ public class EncryptionHandler<K> {
     public void encrypt(Path path) {
         String content = filesUtil.readFile(path);
         BigInteger[] numericContent = encryptionHandlerUtil.convertToNumericContent(content);
-        StringBuilder allKeys = new StringBuilder();
+        StringBuilder keysBuilder = new StringBuilder();
         for (int i = 0; i < repeat; i++) {
             EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
             content = encryptionAlgorithm.encrypt(numericContent, key);
             numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(content);
-            allKeys.append(key.getValue()).append(KEYS_SEPARATOR);
+            keysBuilder.append(key.getValue()).append(KEYS_SEPARATOR);
         }
-        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
-        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
-        filesUtil.writeFile(encryptedFile, content);
-        filesUtil.writeFile(keyFile, allKeys.toString());
-        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
-        ioUtil.printMessage("Keys saved at: " + keyFile);
+        saveEncryptedOutput(path, content, keysBuilder.toString());
     }
 
     public void decrypt(Path encryptedFile, Path keyFile) {
@@ -66,8 +57,22 @@ public class EncryptionHandler<K> {
             numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(encryptedContent);
         }
         String decryptedContent = encryptionHandlerUtil.convertNumericStringToText(encryptedContent);
+        saveDecryptedOutput(encryptedFile, decryptedContent);
+    }
+
+    private void saveEncryptedOutput(Path originalFile, String encryptedContent, String key) {
+        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(originalFile, ENCRYPTED_SUFFIX);
+        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
+        filesUtil.writeFile(encryptedFile, encryptedContent);
+        filesUtil.writeFile(keyFile, key);
+        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
+        ioUtil.printMessage("Keys saved at: " + keyFile);
+    }
+
+    private void saveDecryptedOutput(Path encryptedFile, String decryptedContent) {
         Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(encryptedFile, DECRYPTED_SUFFIX);
         filesUtil.writeFile(decryptedFile, decryptedContent);
         ioUtil.printMessage("File decrypted successfully: " + decryptedFile);
     }
+
 }

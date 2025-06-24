@@ -3,6 +3,6 @@ package iaf.ofek.omega.bda.encryptions;
 @FunctionalInterface
 public interface CharacterShiftProcess {
 
-    Character process(Character character, Integer key);
+    String process(Long value, Integer key);
 
 }

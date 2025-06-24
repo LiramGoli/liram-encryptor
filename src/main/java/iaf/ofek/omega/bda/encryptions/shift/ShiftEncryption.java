@@ -5,7 +5,10 @@ import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.RandomUtil;
 
+import java.util.Arrays;
+
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
+import static iaf.ofek.omega.bda.consts.EncryptionConstants.SEPARATOR;
 
 public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
 
@@ -17,12 +20,12 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
 
     @Override
     public String encrypt(String data, EncryptionKey<Integer> key) {
-        return processEncryption(data, key.getValue(), this::processCharacterEncryption);
+        return processEncryption(convertToLongArray(data), key.getValue(), this::processCharacterEncryption);
     }
 
     @Override
     public String decrypt(String data, EncryptionKey<Integer> key) {
-        return processEncryption(data, key.getValue(), this::processCharacterDecryption);
+        return processEncryption(convertToLongArray(data), key.getValue(), this::processCharacterDecryption);
     }
 
     @Override
@@ -35,16 +38,24 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
         return new EncryptionKey<>(Integer.parseInt(keyContent));
     }
 
-    protected String processEncryption(String data, Integer key, CharacterShiftProcess characterShiftProcess) {
+    protected Long[] convertToLongArray(String data) {
+        return Arrays.stream(data.split("\\" + SEPARATOR))
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .toArray(Long[]::new);
+    }
+
+
+    protected String processEncryption(Long[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
         StringBuilder encryptedText = new StringBuilder();
-        for (Character character : data.toCharArray()) {
-            encryptedText.append(characterShiftProcess.process(character, key));
+        for (Long value : data) {
+            encryptedText.append(characterShiftProcess.process(value, key));
         }
         return String.valueOf(encryptedText);
     }
 
-    protected abstract Character processCharacterEncryption(Character character, Integer key);
+    protected abstract String processCharacterEncryption(Long value, Integer key);
 
-    protected abstract Character processCharacterDecryption(Character character, Integer key);
+    protected abstract String processCharacterDecryption(Long value, Integer key);
 
 }

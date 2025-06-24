@@ -4,20 +4,20 @@ import iaf.ofek.omega.bda.utils.RandomUtil;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.SEPARATOR;
 
-public class ShiftUpEncryption extends ShiftEncryption {
+public class ShiftMultiplyEncryption extends ShiftEncryption {
 
-    public ShiftUpEncryption(RandomUtil randomUtil) {
+    public ShiftMultiplyEncryption(RandomUtil randomUtil) {
         super(randomUtil);
     }
 
     @Override
     protected String processCharacterEncryption(Long value, Integer key) {
-        return String.valueOf(value + key) + SEPARATOR;
+        return String.valueOf((long) value * key) + SEPARATOR;
     }
 
     @Override
     protected String processCharacterDecryption(Long value, Integer key) {
-        return String.valueOf((char) (value - key));
+        return String.valueOf((char) (value / key));
     }
 
 }

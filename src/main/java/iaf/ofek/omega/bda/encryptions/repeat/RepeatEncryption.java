@@ -1,7 +1,12 @@
-package iaf.ofek.omega.bda.encryptions;
+package iaf.ofek.omega.bda.encryptions.repeat;
 
+import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.DataConvertionUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
@@ -20,26 +25,17 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
 
     @Override
     public String encrypt(Long[] data, EncryptionKey<String> key) {
-        String content = "";
-        Long[] numericContent = data;
         String[] encryptionKeys = key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR);
-        for (String encryptionKey : encryptionKeys) {
-            content = innerAlgorithm.encrypt(numericContent, innerAlgorithm.getEncryptionKey(encryptionKey));
-            numericContent = dataConvertionUtil.convertNumericStringToLongArray(content);
-        }
-        return content;
+        return processEncryption(data, Arrays.asList(encryptionKeys),
+                (currentData, currentKey) -> innerAlgorithm.encrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
     public String decrypt(Long[] data, EncryptionKey<String> key) {
-        String content = "";
-        Long[] numericContent = data;
-        String[] encryptionKeys = key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR);
-        for (int i = encryptionKeys.length - 1; i >= 0; i--) {
-            content = innerAlgorithm.decrypt(numericContent, innerAlgorithm.getEncryptionKey(encryptionKeys[i]));
-            numericContent = dataConvertionUtil.convertNumericStringToLongArray(content);
-        }
-        return content;
+        List<String> encryptionKeys = Arrays.asList(key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR));
+        Collections.reverse(encryptionKeys);
+        return processEncryption(data, encryptionKeys,
+                (currentData, currentKey) -> innerAlgorithm.decrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
@@ -54,6 +50,16 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
     @Override
     public EncryptionKey<String> getEncryptionKey(String keyContent) {
         return new EncryptionKey<>(keyContent);
+    }
+
+    private String processEncryption(Long[] data, Iterable<String> encryptionKeys, EncryptionProcess encryptionProcess) {
+        String content = "";
+        Long[] numericContent = data;
+        for (String encryptionKey : encryptionKeys) {
+            content = encryptionProcess.process(numericContent, encryptionKey);
+            numericContent = dataConvertionUtil.convertNumericStringToLongArray(content);
+        }
+        return content;
     }
 
 }

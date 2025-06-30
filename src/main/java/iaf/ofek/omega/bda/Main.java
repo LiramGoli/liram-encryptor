@@ -1,7 +1,7 @@
 package iaf.ofek.omega.bda;
 
 import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
-import iaf.ofek.omega.bda.encryptions.RepeatEncryption;
+import iaf.ofek.omega.bda.encryptions.repeat.RepeatEncryption;
 import iaf.ofek.omega.bda.encryptions.shift.ShiftMultiplyEncryption;
 import iaf.ofek.omega.bda.initializers.ApplicationInitializer;
 import iaf.ofek.omega.bda.logic.handlers.EncryptionHandler;

@@ -30,7 +30,7 @@ public class EncryptionHandler<K> {
 
     public void encrypt(Path path) {
         String content = filesUtil.readFile(path);
-        Long[] numericContent = dataConvertionUtil.convertToNumericContent(content);
+        Long[] numericContent = dataConvertionUtil.convertStringToLongArray(content);
         EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
         content = encryptionAlgorithm.encrypt(numericContent, key);
         saveEncryptedOutput(path, content, key.toString());

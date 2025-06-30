@@ -8,7 +8,7 @@ import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
 
 public class DataConvertionUtil {
 
-    public Long[] convertToNumericContent(String context) {
+    public Long[] convertStringToLongArray(String context) {
         StringBuilder numericContent = new StringBuilder();
         for (Character character : context.toCharArray()) {
             numericContent.append((int) character).append(ENCRYPTED_CHARACTERS_SEPARATOR);

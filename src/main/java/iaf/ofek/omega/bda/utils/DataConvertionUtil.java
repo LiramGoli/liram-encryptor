@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.ENCRYPTED_CHARACTERS_SEPARATOR;
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
 
-public class EncryptionHandlerUtil {
+public class DataConvertionUtil {
 
     public Long[] convertToNumericContent(String context) {
         StringBuilder numericContent = new StringBuilder();

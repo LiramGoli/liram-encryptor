@@ -1,6 +1,7 @@
 package iaf.ofek.omega.bda;
 
-import iaf.ofek.omega.bda.encryptions.shift.ShiftEncryption;
+import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
+import iaf.ofek.omega.bda.encryptions.RepeatEncryption;
 import iaf.ofek.omega.bda.encryptions.shift.ShiftMultiplyEncryption;
 import iaf.ofek.omega.bda.initializers.ApplicationInitializer;
 import iaf.ofek.omega.bda.logic.handlers.EncryptionHandler;
@@ -20,16 +21,17 @@ public class Main {
         IOUtil ioUtil = new IOUtil(new Scanner(System.in));
         RandomUtil randomUtil = new RandomUtil(new Random());
         PathValidationUtil pathValidationUtil = new PathValidationUtil();
-        EncryptionHandlerUtil encryptionHandlerUtil = new EncryptionHandlerUtil();
+        DataConvertionUtil dataConvertionUtil = new DataConvertionUtil();
         FilesUtil filesUtil = new FilesUtil(pathValidationUtil, ioUtil);
         MenuIOUtil menuIOUtil = new MenuIOUtil(ioUtil);
         FileNameUtil fileNameUtil = new FileNameUtil(filesUtil);
         Map<Integer, MenuOperation> operationMap = new HashMap<>();
-        ShiftEncryption shiftMultiplyEncryption = new ShiftMultiplyEncryption(randomUtil);
+        EncryptionAlgorithm<Integer> shiftMultiplyEncryption = new ShiftMultiplyEncryption(randomUtil);
+        EncryptionAlgorithm<String> repeatEncryption = new RepeatEncryption(shiftMultiplyEncryption, dataConvertionUtil, 2);
         MenuOperationSelector menuOperationSelector = new MenuOperationSelector(operationMap);
         EncryptionFilesUtil encryptionFilesUtil = new EncryptionFilesUtil(fileNameUtil, filesUtil);
-        EncryptionHandler<Integer> encryptionHandler = new EncryptionHandler<>(shiftMultiplyEncryption, encryptionFilesUtil, encryptionHandlerUtil, filesUtil, 2, ioUtil);
-        MenuOperationHandler<Integer> menuOperationHandler = new MenuOperationHandler<>(encryptionHandler, filesUtil, ioUtil);
+        EncryptionHandler<String> encryptionHandler = new EncryptionHandler<>(dataConvertionUtil, repeatEncryption, encryptionFilesUtil, filesUtil, ioUtil);
+        MenuOperationHandler<String> menuOperationHandler = new MenuOperationHandler<>(encryptionHandler, filesUtil, ioUtil);
         menuOperationSelector.registerOperations(menuOperationHandler);
         ApplicationInitializer applicationInitializer = new ApplicationInitializer(menuOperationSelector, menuIOUtil, ioUtil);
         applicationInitializer.initializeApp();

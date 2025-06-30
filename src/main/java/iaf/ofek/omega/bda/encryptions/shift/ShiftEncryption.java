@@ -5,6 +5,7 @@ import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.RandomUtil;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
+import static iaf.ofek.omega.bda.consts.EncryptionConstants.ENCRYPTED_CHARACTERS_SEPARATOR;
 
 public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
 
@@ -37,13 +38,13 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
     protected String processEncryption(Long[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
         StringBuilder processedData = new StringBuilder();
         for (Long value : data) {
-            processedData.append(characterShiftProcess.process(value, key));
+            processedData.append(characterShiftProcess.process(value, key)).append(ENCRYPTED_CHARACTERS_SEPARATOR);
         }
         return processedData.toString();
     }
 
-    protected abstract String processCharacterEncryption(Long value, Integer key);
+    protected abstract Long processCharacterEncryption(Long value, Integer key);
 
-    protected abstract String processCharacterDecryption(Long value, Integer key);
+    protected abstract Long processCharacterDecryption(Long value, Integer key);
 
 }

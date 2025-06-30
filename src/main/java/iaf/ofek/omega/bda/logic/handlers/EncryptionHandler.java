@@ -33,7 +33,12 @@ public class EncryptionHandler<K> {
         Long[] numericContent = dataConvertionUtil.convertStringToLongArray(content);
         EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
         content = encryptionAlgorithm.encrypt(numericContent, key);
-        saveEncryptedOutput(path, content, key.toString());
+        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
+        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
+        filesUtil.writeFile(encryptedFile, content);
+        filesUtil.writeFile(keyFile, key.toString());
+        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
+        ioUtil.printMessage("Keys saved at: " + keyFile);
     }
 
     public void decrypt(Path encryptedFile, Path keyPath) {
@@ -42,19 +47,6 @@ public class EncryptionHandler<K> {
         Long[] numericContent = dataConvertionUtil.convertNumericStringToLongArray(encryptedContent);
         encryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
         String decryptedContent = dataConvertionUtil.convertNumericStringToText(encryptedContent);
-        saveDecryptedOutput(encryptedFile, decryptedContent);
-    }
-
-    private void saveEncryptedOutput(Path originalFile, String encryptedContent, String key) {
-        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(originalFile, ENCRYPTED_SUFFIX);
-        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
-        filesUtil.writeFile(encryptedFile, encryptedContent);
-        filesUtil.writeFile(keyFile, key);
-        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
-        ioUtil.printMessage("Keys saved at: " + keyFile);
-    }
-
-    private void saveDecryptedOutput(Path encryptedFile, String decryptedContent) {
         Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(encryptedFile, DECRYPTED_SUFFIX);
         filesUtil.writeFile(decryptedFile, decryptedContent);
         ioUtil.printMessage("File decrypted successfully: " + decryptedFile);

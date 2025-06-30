@@ -1,11 +1,8 @@
 package iaf.ofek.omega.bda.encryptions.shift;
 
-import iaf.ofek.omega.bda.encryptions.CharacterShiftProcess;
 import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.RandomUtil;
-
-import java.math.BigInteger;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
 
@@ -18,12 +15,12 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
     }
 
     @Override
-    public String encrypt(BigInteger[] data, EncryptionKey<Integer> key) {
+    public String encrypt(Long[] data, EncryptionKey<Integer> key) {
         return processEncryption(data, key.getValue(), this::processCharacterEncryption);
     }
 
     @Override
-    public String decrypt(BigInteger[] data, EncryptionKey<Integer> key) {
+    public String decrypt(Long[] data, EncryptionKey<Integer> key) {
         return processEncryption(data, key.getValue(), this::processCharacterDecryption);
     }
 
@@ -37,16 +34,16 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
         return new EncryptionKey<>(Integer.parseInt(keyContent));
     }
 
-    protected String processEncryption(BigInteger[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
+    protected String processEncryption(Long[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
         StringBuilder processedData = new StringBuilder();
-        for (BigInteger value : data) {
+        for (Long value : data) {
             processedData.append(characterShiftProcess.process(value, key));
         }
         return processedData.toString();
     }
 
-    protected abstract String processCharacterEncryption(BigInteger value, Integer key);
+    protected abstract String processCharacterEncryption(Long value, Integer key);
 
-    protected abstract String processCharacterDecryption(BigInteger value, Integer key);
+    protected abstract String processCharacterDecryption(Long value, Integer key);
 
 }

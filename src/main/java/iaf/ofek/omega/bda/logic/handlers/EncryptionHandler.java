@@ -7,7 +7,6 @@ import iaf.ofek.omega.bda.utils.EncryptionHandlerUtil;
 import iaf.ofek.omega.bda.utils.FilesUtil;
 import iaf.ofek.omega.bda.utils.IOUtil;
 
-import java.math.BigInteger;
 import java.nio.file.Path;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
@@ -36,12 +35,12 @@ public class EncryptionHandler<K> {
 
     public void encrypt(Path path) {
         String content = filesUtil.readFile(path);
-        BigInteger[] numericContent = encryptionHandlerUtil.convertToNumericContent(content);
+        Long[] numericContent = encryptionHandlerUtil.convertToNumericContent(content);
         StringBuilder keysBuilder = new StringBuilder();
         for (int i = 0; i < repeat; i++) {
             EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
             content = encryptionAlgorithm.encrypt(numericContent, key);
-            numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(content);
+            numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(content);
             keysBuilder.append(key.getValue()).append(KEYS_SEPARATOR);
         }
         saveEncryptedOutput(path, content, keysBuilder.toString());
@@ -50,11 +49,11 @@ public class EncryptionHandler<K> {
     public void decrypt(Path encryptedFile, Path keyFile) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
         String[] keysArray = filesUtil.readFile(keyFile).split(REGEX_PREFIX + KEYS_SEPARATOR);
-        BigInteger[] numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(encryptedContent);
+        Long[] numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(encryptedContent);
         for (int i = repeat - 1; i >= 0; i--) {
             EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(keysArray[i]);
             encryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
-            numericContent = encryptionHandlerUtil.convertNumericStringToBigIntArray(encryptedContent);
+            numericContent = encryptionHandlerUtil.convertNumericStringToLongArray(encryptedContent);
         }
         String decryptedContent = encryptionHandlerUtil.convertNumericStringToText(encryptedContent);
         saveDecryptedOutput(encryptedFile, decryptedContent);

@@ -1,6 +1,5 @@
 package iaf.ofek.omega.bda.utils;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -9,25 +8,25 @@ import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
 
 public class EncryptionHandlerUtil {
 
-    public BigInteger[] convertToNumericContent(String context) {
+    public Long[] convertToNumericContent(String context) {
         StringBuilder numericContent = new StringBuilder();
         for (Character character : context.toCharArray()) {
             numericContent.append((int) character).append(ENCRYPTED_CHARACTERS_SEPARATOR);
         }
-        return convertNumericStringToBigIntArray(numericContent.toString());
+        return convertNumericStringToLongArray(numericContent.toString());
     }
 
-    public BigInteger[] convertNumericStringToBigIntArray(String data) {
+    public Long[] convertNumericStringToLongArray(String data) {
         return Arrays.stream(data.split(REGEX_PREFIX + ENCRYPTED_CHARACTERS_SEPARATOR))
                 .filter(s -> !s.isEmpty())
-                .map(BigInteger::new)
-                .toArray(BigInteger[]::new);
+                .map(Long::parseLong)
+                .toArray(Long[]::new);
     }
 
     public String convertNumericStringToText(String context) {
         return Arrays.stream(context.split(REGEX_PREFIX + ENCRYPTED_CHARACTERS_SEPARATOR))
                 .filter(s -> !s.isEmpty())
-                .map(s -> String.valueOf((char) new BigInteger(s).intValue()))
+                .map(s -> String.valueOf((char) Integer.parseInt(s)))
                 .collect(Collectors.joining());
     }
 }

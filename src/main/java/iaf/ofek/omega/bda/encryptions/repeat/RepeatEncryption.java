@@ -2,37 +2,33 @@ package iaf.ofek.omega.bda.encryptions.repeat;
 
 import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
-import iaf.ofek.omega.bda.utils.DataConvertionUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
-import static iaf.ofek.omega.bda.consts.EncryptionConstants.REGEX_PREFIX;
 
 public class RepeatEncryption implements EncryptionAlgorithm<String> {
 
     private final EncryptionAlgorithm<Integer> innerAlgorithm;
-    private final DataConvertionUtil dataConvertionUtil;
     private final Integer repeat;
 
-    public RepeatEncryption(EncryptionAlgorithm<Integer> innerAlgorithm, DataConvertionUtil dataConvertionUtil, Integer repeat) {
+    public RepeatEncryption(EncryptionAlgorithm<Integer> innerAlgorithm, Integer repeat) {
         this.innerAlgorithm = innerAlgorithm;
-        this.dataConvertionUtil = dataConvertionUtil;
         this.repeat = repeat;
     }
 
     @Override
     public List<Long> encrypt(List<Long> data, EncryptionKey<String> key) {
-        List<String> encryptionKeys = Arrays.asList(key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR));
+        List<String> encryptionKeys = Arrays.asList(key.getValue().split("\\" + KEYS_SEPARATOR));
         return processEncryption(data, encryptionKeys,
                 (currentData, currentKey) -> innerAlgorithm.encrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
     public List<Long> decrypt(List<Long> data, EncryptionKey<String> key) {
-        List<String> encryptionKeys = Arrays.asList(key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR));
+        List<String> encryptionKeys = Arrays.asList(key.getValue().split("\\" + KEYS_SEPARATOR));
         Collections.reverse(encryptionKeys);
         return processEncryption(data, encryptionKeys,
                 (currentData, currentKey) -> innerAlgorithm.decrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));

@@ -31,26 +31,34 @@ public class EncryptionHandler<K> {
 
     public void encrypt(Path path) {
         String fileContent = filesUtil.readFile(path);
-        List<Long> numericContent = dataConvertionUtil.convertStringToLongArray(fileContent);
+        List<Long> numericContent = dataConvertionUtil.convertDataToAscii(fileContent);
         EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
         List<Long> encryptedContent = encryptionAlgorithm.encrypt(numericContent, key);
         String parsedContent = dataConvertionUtil.convertListToEncryptedString(encryptedContent);
-        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
-        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
-        filesUtil.writeFile(encryptedFile, parsedContent);
-        filesUtil.writeFile(keyFile, key.toString());
-        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
-        ioUtil.printMessage("Keys saved at: " + keyFile);
+        saveEncryptedFile(path, key, parsedContent);
     }
 
     public void decrypt(Path encryptedFile, Path keyPath) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
         EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
-        List<Long> numericContent = dataConvertionUtil.convertNumericStringToLongArray(encryptedContent);
+        List<Long> numericContent = dataConvertionUtil.convertProcessedDataToLongArray(encryptedContent);
         List<Long> decryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
         String parsedContent = dataConvertionUtil.convertListToDecryptedString(decryptedContent);
-        Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(encryptedFile, DECRYPTED_SUFFIX);
-        filesUtil.writeFile(decryptedFile, parsedContent);
+        saveDecryptedFile(encryptedFile, parsedContent);
+    }
+
+    private void saveEncryptedFile(Path filePath, EncryptionKey<K> key, String encryptedContent) {
+        Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(filePath, ENCRYPTED_SUFFIX);
+        Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
+        filesUtil.writeFile(encryptedFile, encryptedContent);
+        filesUtil.writeFile(keyFile, key.toString());
+        ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
+        ioUtil.printMessage("Keys saved at: " + keyFile);
+    }
+
+    private void saveDecryptedFile(Path filePath, String decryptedContent) {
+        Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(filePath, DECRYPTED_SUFFIX);
+        filesUtil.writeFile(decryptedFile, decryptedContent);
         ioUtil.printMessage("File decrypted successfully: " + decryptedFile);
     }
 

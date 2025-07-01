@@ -8,6 +8,7 @@ import iaf.ofek.omega.bda.utils.FilesUtil;
 import iaf.ofek.omega.bda.utils.IOUtil;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import static iaf.ofek.omega.bda.consts.FileNameConstants.DECRYPTED_SUFFIX;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.ENCRYPTED_SUFFIX;
@@ -29,13 +30,14 @@ public class EncryptionHandler<K> {
     }
 
     public void encrypt(Path path) {
-        String content = filesUtil.readFile(path);
-        Long[] numericContent = dataConvertionUtil.convertStringToLongArray(content);
+        String fileContent = filesUtil.readFile(path);
+        List<Long> numericContent = dataConvertionUtil.convertStringToLongArray(fileContent);
         EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
-        content = encryptionAlgorithm.encrypt(numericContent, key);
+        List<Long> encryptedContent = encryptionAlgorithm.encrypt(numericContent, key);
+        String parsedContent = dataConvertionUtil.convertListToEncryptedString(encryptedContent);
         Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(path, ENCRYPTED_SUFFIX);
         Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
-        filesUtil.writeFile(encryptedFile, content);
+        filesUtil.writeFile(encryptedFile, parsedContent);
         filesUtil.writeFile(keyFile, key.toString());
         ioUtil.printMessage("File encrypted successfully: " + encryptedFile);
         ioUtil.printMessage("Keys saved at: " + keyFile);
@@ -44,11 +46,11 @@ public class EncryptionHandler<K> {
     public void decrypt(Path encryptedFile, Path keyPath) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
         EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
-        Long[] numericContent = dataConvertionUtil.convertNumericStringToLongArray(encryptedContent);
-        encryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
-        String decryptedContent = dataConvertionUtil.convertNumericStringToText(encryptedContent);
+        List<Long> numericContent = dataConvertionUtil.convertNumericStringToLongArray(encryptedContent);
+        List<Long> decryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
+        String parsedContent = dataConvertionUtil.convertListToDecryptedString(decryptedContent);
         Path decryptedFile = encryptionFilesUtil.createPathWithSuffix(encryptedFile, DECRYPTED_SUFFIX);
-        filesUtil.writeFile(decryptedFile, decryptedContent);
+        filesUtil.writeFile(decryptedFile, parsedContent);
         ioUtil.printMessage("File decrypted successfully: " + decryptedFile);
     }
 

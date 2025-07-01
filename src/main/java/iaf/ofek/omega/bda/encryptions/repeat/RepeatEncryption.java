@@ -15,23 +15,23 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
 
     private final EncryptionAlgorithm<Integer> innerAlgorithm;
     private final DataConvertionUtil dataConvertionUtil;
-    private final int repeat;
+    private final Integer repeat;
 
-    public RepeatEncryption(EncryptionAlgorithm<Integer> innerAlgorithm, DataConvertionUtil dataConvertionUtil, int repeat) {
+    public RepeatEncryption(EncryptionAlgorithm<Integer> innerAlgorithm, DataConvertionUtil dataConvertionUtil, Integer repeat) {
         this.innerAlgorithm = innerAlgorithm;
         this.dataConvertionUtil = dataConvertionUtil;
         this.repeat = repeat;
     }
 
     @Override
-    public String encrypt(Long[] data, EncryptionKey<String> key) {
-        String[] encryptionKeys = key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR);
-        return processEncryption(data, Arrays.asList(encryptionKeys),
+    public List<Long> encrypt(List<Long> data, EncryptionKey<String> key) {
+        List<String> encryptionKeys = Arrays.asList(key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR));
+        return processEncryption(data, encryptionKeys,
                 (currentData, currentKey) -> innerAlgorithm.encrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
-    public String decrypt(Long[] data, EncryptionKey<String> key) {
+    public List<Long> decrypt(List<Long> data, EncryptionKey<String> key) {
         List<String> encryptionKeys = Arrays.asList(key.getValue().split(REGEX_PREFIX + KEYS_SEPARATOR));
         Collections.reverse(encryptionKeys);
         return processEncryption(data, encryptionKeys,
@@ -52,14 +52,12 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
         return new EncryptionKey<>(keyContent);
     }
 
-    private String processEncryption(Long[] data, Iterable<String> encryptionKeys, EncryptionProcess encryptionProcess) {
-        String content = "";
-        Long[] numericContent = data;
+    private List<Long> processEncryption(List<Long> data, Iterable<String> encryptionKeys, EncryptionProcess encryptionProcess) {
+        List<Long> numericContent = data;
         for (String encryptionKey : encryptionKeys) {
-            content = encryptionProcess.process(numericContent, encryptionKey);
-            numericContent = dataConvertionUtil.convertNumericStringToLongArray(content);
+            numericContent = encryptionProcess.process(numericContent, encryptionKey);
         }
-        return content;
+        return numericContent;
     }
 
 }

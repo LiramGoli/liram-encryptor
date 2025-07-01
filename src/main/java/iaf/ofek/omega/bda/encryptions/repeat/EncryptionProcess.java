@@ -1,8 +1,10 @@
 package iaf.ofek.omega.bda.encryptions.repeat;
 
+import java.util.List;
+
 @FunctionalInterface
 public interface EncryptionProcess {
 
-    String process(Long[] data, String key);
+    List<Long> process(List<Long> data, String key);
 
 }

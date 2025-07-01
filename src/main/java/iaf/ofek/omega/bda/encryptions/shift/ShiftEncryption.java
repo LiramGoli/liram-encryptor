@@ -4,8 +4,10 @@ import iaf.ofek.omega.bda.encryptions.EncryptionAlgorithm;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.RandomUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
-import static iaf.ofek.omega.bda.consts.EncryptionConstants.ENCRYPTED_CHARACTERS_SEPARATOR;
 
 public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
 
@@ -16,12 +18,12 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
     }
 
     @Override
-    public String encrypt(Long[] data, EncryptionKey<Integer> key) {
+    public List<Long> encrypt(List<Long> data, EncryptionKey<Integer> key) {
         return processEncryption(data, key.getValue(), this::processCharacterEncryption);
     }
 
     @Override
-    public String decrypt(Long[] data, EncryptionKey<Integer> key) {
+    public List<Long> decrypt(List<Long> data, EncryptionKey<Integer> key) {
         return processEncryption(data, key.getValue(), this::processCharacterDecryption);
     }
 
@@ -35,12 +37,12 @@ public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
         return new EncryptionKey<>(Integer.parseInt(keyContent));
     }
 
-    protected String processEncryption(Long[] data, Integer key, CharacterShiftProcess characterShiftProcess) {
-        StringBuilder processedData = new StringBuilder();
+    protected List<Long> processEncryption(List<Long> data, Integer key, CharacterShiftProcess characterShiftProcess) {
+        List<Long> processedData = new ArrayList<>();
         for (Long value : data) {
-            processedData.append(characterShiftProcess.process(value, key)).append(ENCRYPTED_CHARACTERS_SEPARATOR);
+            processedData.add(characterShiftProcess.process(value, key));
         }
-        return processedData.toString();
+        return processedData;
     }
 
     protected abstract Long processCharacterEncryption(Long value, Integer key);

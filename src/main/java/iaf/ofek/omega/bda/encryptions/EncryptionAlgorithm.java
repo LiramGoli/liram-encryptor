@@ -2,14 +2,16 @@ package iaf.ofek.omega.bda.encryptions;
 
 import iaf.ofek.omega.bda.models.EncryptionKey;
 
-public interface EncryptionAlgorithm<K> {
+import java.util.List;
 
-    String encrypt(String data, EncryptionKey<K> key);
+public interface EncryptionAlgorithm<K extends EncryptionKey<?>> {
 
-    String decrypt(String data, EncryptionKey<K> key);
+    List<Long> encrypt(List<Long> data, K key);
 
-    EncryptionKey<K> generateEncryptionKey();
+    List<Long> decrypt(List<Long> data, K key);
 
-    EncryptionKey<K> getEncryptionKey(String keyContent);
+    K generateEncryptionKey();
+
+    K getEncryptionKey(String keyContent);
 
 }

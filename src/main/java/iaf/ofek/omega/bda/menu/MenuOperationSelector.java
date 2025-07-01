@@ -2,6 +2,7 @@ package iaf.ofek.omega.bda.menu;
 
 import iaf.ofek.omega.bda.exceptions.InvalidMenuOperationException;
 import iaf.ofek.omega.bda.logic.handlers.MenuOperationHandler;
+import iaf.ofek.omega.bda.models.EncryptionKey;
 
 import java.util.Map;
 import java.util.Objects;
@@ -16,7 +17,7 @@ public class MenuOperationSelector {
         this.menuOperations = menuOperations;
     }
 
-    public <T> void registerOperations(MenuOperationHandler<T> menuOperationHandler) {
+    public <T extends EncryptionKey<?>> void registerOperations(MenuOperationHandler<T> menuOperationHandler) {
         menuOperations.put(Exit.getLabel(), menuOperationHandler::exitApplication);
         menuOperations.put(Encrypt.getLabel(), menuOperationHandler::encrypt);
         menuOperations.put(Decrypt.getLabel(), menuOperationHandler::decrypt);

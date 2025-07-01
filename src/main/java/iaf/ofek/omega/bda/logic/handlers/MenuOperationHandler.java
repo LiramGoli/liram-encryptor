@@ -1,11 +1,12 @@
 package iaf.ofek.omega.bda.logic.handlers;
 
+import iaf.ofek.omega.bda.models.EncryptionKey;
 import iaf.ofek.omega.bda.utils.FilesUtil;
 import iaf.ofek.omega.bda.utils.IOUtil;
 
 import java.nio.file.Path;
 
-public class MenuOperationHandler<T> {
+public class MenuOperationHandler<T extends EncryptionKey<?>> {
 
     private final EncryptionHandler<T> encryptionHandler;
     private final FilesUtil filesUtil;

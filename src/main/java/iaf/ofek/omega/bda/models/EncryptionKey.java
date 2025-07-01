@@ -2,7 +2,7 @@ package iaf.ofek.omega.bda.models;
 
 public class EncryptionKey<T> {
 
-    private final T value;
+    protected final T value;
 
     public EncryptionKey(T value) {
         this.value = value;

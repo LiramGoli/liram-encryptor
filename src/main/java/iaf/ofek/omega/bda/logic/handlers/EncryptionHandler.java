@@ -13,7 +13,7 @@ import java.util.List;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.DECRYPTED_SUFFIX;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.ENCRYPTED_SUFFIX;
 
-public class EncryptionHandler<K> {
+public class EncryptionHandler<K extends EncryptionKey<?>> {
 
     private final DataConvertionUtil dataConvertionUtil;
     private final EncryptionAlgorithm<K> encryptionAlgorithm;
@@ -32,7 +32,7 @@ public class EncryptionHandler<K> {
     public void encrypt(Path path) {
         String fileContent = filesUtil.readFile(path);
         List<Long> numericContent = dataConvertionUtil.convertDataToAscii(fileContent);
-        EncryptionKey<K> key = encryptionAlgorithm.generateEncryptionKey();
+        K key = encryptionAlgorithm.generateEncryptionKey();
         List<Long> encryptedContent = encryptionAlgorithm.encrypt(numericContent, key);
         String parsedContent = dataConvertionUtil.convertListToEncryptedString(encryptedContent);
         saveEncryptedFile(path, key, parsedContent);
@@ -40,14 +40,14 @@ public class EncryptionHandler<K> {
 
     public void decrypt(Path encryptedFile, Path keyPath) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
-        EncryptionKey<K> key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
+        K key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
         List<Long> numericContent = dataConvertionUtil.convertProcessedDataToLongArray(encryptedContent);
         List<Long> decryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
         String parsedContent = dataConvertionUtil.convertListToDecryptedString(decryptedContent);
         saveDecryptedFile(encryptedFile, parsedContent);
     }
 
-    private void saveEncryptedFile(Path filePath, EncryptionKey<K> key, String encryptedContent) {
+    private void saveEncryptedFile(Path filePath, K key, String encryptedContent) {
         Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(filePath, ENCRYPTED_SUFFIX);
         Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
         filesUtil.writeFile(encryptedFile, encryptedContent);

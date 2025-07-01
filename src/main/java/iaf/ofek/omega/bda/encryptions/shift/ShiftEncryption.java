@@ -9,7 +9,7 @@ import java.util.List;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.CHAR_MAX_VALUE;
 
-public abstract class ShiftEncryption implements EncryptionAlgorithm<Integer> {
+public abstract class ShiftEncryption implements EncryptionAlgorithm<EncryptionKey<Integer>> {
 
     private final RandomUtil randomUtil;
 

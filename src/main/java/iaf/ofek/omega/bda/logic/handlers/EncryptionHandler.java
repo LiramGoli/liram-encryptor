@@ -13,15 +13,15 @@ import java.util.List;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.DECRYPTED_SUFFIX;
 import static iaf.ofek.omega.bda.consts.FileNameConstants.ENCRYPTED_SUFFIX;
 
-public class EncryptionHandler<K extends EncryptionKey<?>> {
+public class EncryptionHandler<T extends EncryptionKey<?>> {
 
     private final DataConvertionUtil dataConvertionUtil;
-    private final EncryptionAlgorithm<K> encryptionAlgorithm;
+    private final EncryptionAlgorithm<T> encryptionAlgorithm;
     private final EncryptionFilesUtil encryptionFilesUtil;
     private final FilesUtil filesUtil;
     private final IOUtil ioUtil;
 
-    public EncryptionHandler(DataConvertionUtil dataConvertionUtil, EncryptionAlgorithm<K> encryptionAlgorithm, EncryptionFilesUtil encryptionFilesUtil, FilesUtil filesUtil, IOUtil ioUtil) {
+    public EncryptionHandler(DataConvertionUtil dataConvertionUtil, EncryptionAlgorithm<T> encryptionAlgorithm, EncryptionFilesUtil encryptionFilesUtil, FilesUtil filesUtil, IOUtil ioUtil) {
         this.dataConvertionUtil = dataConvertionUtil;
         this.encryptionAlgorithm = encryptionAlgorithm;
         this.encryptionFilesUtil = encryptionFilesUtil;
@@ -32,7 +32,7 @@ public class EncryptionHandler<K extends EncryptionKey<?>> {
     public void encrypt(Path path) {
         String fileContent = filesUtil.readFile(path);
         List<Long> asciiList = dataConvertionUtil.convertDataToListOfAscii(fileContent);
-        K key = encryptionAlgorithm.generateEncryptionKey();
+        T key = encryptionAlgorithm.generateEncryptionKey();
         List<Long> encryptedContent = encryptionAlgorithm.encrypt(asciiList, key);
         String parsedContent = dataConvertionUtil.convertListToEncryptedString(encryptedContent);
         saveEncryptedFile(path, key, parsedContent);
@@ -40,14 +40,14 @@ public class EncryptionHandler<K extends EncryptionKey<?>> {
 
     public void decrypt(Path encryptedFile, Path keyPath) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
-        K key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
+        T key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
         List<Long> encryptedContentList = dataConvertionUtil.convertProcessedDataToLongArray(encryptedContent);
         List<Long> decryptedContent = encryptionAlgorithm.decrypt(encryptedContentList, key);
         String parsedContent = dataConvertionUtil.convertListToDecryptedString(decryptedContent);
         saveDecryptedFile(encryptedFile, parsedContent);
     }
 
-    private void saveEncryptedFile(Path filePath, K key, String encryptedContent) {
+    private void saveEncryptedFile(Path filePath, T key, String encryptedContent) {
         Path encryptedFile = encryptionFilesUtil.createPathWithSuffix(filePath, ENCRYPTED_SUFFIX);
         Path keyFile = encryptionFilesUtil.createKeyFilePath(encryptedFile);
         filesUtil.writeFile(encryptedFile, encryptedContent);

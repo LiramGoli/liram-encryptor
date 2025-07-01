@@ -27,7 +27,7 @@ public class Main {
         FileNameUtil fileNameUtil = new FileNameUtil(filesUtil);
         Map<Integer, MenuOperation> operationMap = new HashMap<>();
         EncryptionAlgorithm<Integer> shiftMultiplyEncryption = new ShiftMultiplyEncryption(randomUtil);
-        EncryptionAlgorithm<String> repeatEncryption = new RepeatEncryption(shiftMultiplyEncryption, dataConvertionUtil, 2);
+        EncryptionAlgorithm<String> repeatEncryption = new RepeatEncryption(shiftMultiplyEncryption, 2);
         MenuOperationSelector menuOperationSelector = new MenuOperationSelector(operationMap);
         EncryptionFilesUtil encryptionFilesUtil = new EncryptionFilesUtil(fileNameUtil, filesUtil);
         EncryptionHandler<String> encryptionHandler = new EncryptionHandler<>(dataConvertionUtil, repeatEncryption, encryptionFilesUtil, filesUtil, ioUtil);

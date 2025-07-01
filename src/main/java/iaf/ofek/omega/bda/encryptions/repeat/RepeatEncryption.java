@@ -11,11 +11,11 @@ import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
 
 public class RepeatEncryption implements EncryptionAlgorithm<String> {
 
-    private final EncryptionAlgorithm<Integer> innerAlgorithm;
+    private final EncryptionAlgorithm<Integer> baseAlgorithm;
     private final Integer repeat;
 
-    public RepeatEncryption(EncryptionAlgorithm<Integer> innerAlgorithm, Integer repeat) {
-        this.innerAlgorithm = innerAlgorithm;
+    public RepeatEncryption(EncryptionAlgorithm<Integer> baseAlgorithm, Integer repeat) {
+        this.baseAlgorithm = baseAlgorithm;
         this.repeat = repeat;
     }
 
@@ -23,7 +23,7 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
     public List<Long> encrypt(List<Long> data, EncryptionKey<String> key) {
         List<String> encryptionKeys = Arrays.asList(key.getValue().split("\\" + KEYS_SEPARATOR));
         return processEncryption(data, encryptionKeys,
-                (currentData, currentKey) -> innerAlgorithm.encrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
+                (currentData, currentKey) -> baseAlgorithm.encrypt(currentData, baseAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
@@ -31,14 +31,14 @@ public class RepeatEncryption implements EncryptionAlgorithm<String> {
         List<String> encryptionKeys = Arrays.asList(key.getValue().split("\\" + KEYS_SEPARATOR));
         Collections.reverse(encryptionKeys);
         return processEncryption(data, encryptionKeys,
-                (currentData, currentKey) -> innerAlgorithm.decrypt(currentData, innerAlgorithm.getEncryptionKey(currentKey)));
+                (currentData, currentKey) -> baseAlgorithm.decrypt(currentData, baseAlgorithm.getEncryptionKey(currentKey)));
     }
 
     @Override
     public EncryptionKey<String> generateEncryptionKey() {
         StringBuilder combinedKeys = new StringBuilder();
         for (int i = 0; i < repeat; i++) {
-            combinedKeys.append(innerAlgorithm.generateEncryptionKey()).append(KEYS_SEPARATOR);
+            combinedKeys.append(baseAlgorithm.generateEncryptionKey()).append(KEYS_SEPARATOR);
         }
         return new EncryptionKey<>(combinedKeys.toString());
     }

@@ -31,9 +31,9 @@ public class EncryptionHandler<K extends EncryptionKey<?>> {
 
     public void encrypt(Path path) {
         String fileContent = filesUtil.readFile(path);
-        List<Long> numericContent = dataConvertionUtil.convertDataToAscii(fileContent);
+        List<Long> asciiList = dataConvertionUtil.convertDataToListOfAscii(fileContent);
         K key = encryptionAlgorithm.generateEncryptionKey();
-        List<Long> encryptedContent = encryptionAlgorithm.encrypt(numericContent, key);
+        List<Long> encryptedContent = encryptionAlgorithm.encrypt(asciiList, key);
         String parsedContent = dataConvertionUtil.convertListToEncryptedString(encryptedContent);
         saveEncryptedFile(path, key, parsedContent);
     }
@@ -41,8 +41,8 @@ public class EncryptionHandler<K extends EncryptionKey<?>> {
     public void decrypt(Path encryptedFile, Path keyPath) {
         String encryptedContent = filesUtil.readFile(encryptedFile);
         K key = encryptionAlgorithm.getEncryptionKey(filesUtil.readFile(keyPath));
-        List<Long> numericContent = dataConvertionUtil.convertProcessedDataToLongArray(encryptedContent);
-        List<Long> decryptedContent = encryptionAlgorithm.decrypt(numericContent, key);
+        List<Long> encryptedContentList = dataConvertionUtil.convertProcessedDataToLongArray(encryptedContent);
+        List<Long> decryptedContent = encryptionAlgorithm.decrypt(encryptedContentList, key);
         String parsedContent = dataConvertionUtil.convertListToDecryptedString(decryptedContent);
         saveDecryptedFile(encryptedFile, parsedContent);
     }

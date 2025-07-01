@@ -9,7 +9,7 @@ import static iaf.ofek.omega.bda.consts.EncryptionConstants.ENCRYPTED_CHARACTERS
 
 public class DataConvertionUtil {
 
-    public List<Long> convertDataToAscii(String data) {
+    public List<Long> convertDataToListOfAscii(String data) {
         return data.chars()
                 .mapToLong(c -> (long) c)
                 .boxed()

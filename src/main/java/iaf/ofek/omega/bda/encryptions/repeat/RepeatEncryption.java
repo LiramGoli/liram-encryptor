@@ -5,8 +5,10 @@ import iaf.ofek.omega.bda.models.CompositeEncryptionKey;
 import iaf.ofek.omega.bda.models.EncryptionKey;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static iaf.ofek.omega.bda.consts.EncryptionConstants.KEYS_SEPARATOR;
 
@@ -45,20 +47,17 @@ public class RepeatEncryption implements EncryptionAlgorithm<CompositeEncryption
 
     @Override
     public CompositeEncryptionKey<Integer> getEncryptionKey(String keyContent) {
-        String[] parts = keyContent.split("\\" + KEYS_SEPARATOR);
-        List<EncryptionKey<Integer>> keys = new ArrayList<>();
-        for (String part : parts) {
-            keys.add(baseAlgorithm.getEncryptionKey(part));
-        }
+        List<EncryptionKey<Integer>> keys = Arrays.stream(keyContent.split("\\" + KEYS_SEPARATOR))
+                .map(baseAlgorithm::getEncryptionKey)
+                .collect(Collectors.toList());
         return new CompositeEncryptionKey<>(keys);
     }
 
     private List<Long> processEncryption(List<Long> data, Iterable<EncryptionKey<Integer>> encryptionKeys, EncryptionProcess encryptionProcess) {
-        List<Long> numericContent = data;
         for (EncryptionKey<Integer> encryptionKey : encryptionKeys) {
-            numericContent = encryptionProcess.process(numericContent, encryptionKey.toString());
+            data = encryptionProcess.process(data, encryptionKey.toString());
         }
-        return numericContent;
+        return data;
     }
 
 }
